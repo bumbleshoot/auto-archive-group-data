@@ -1,5 +1,5 @@
 /**
- * Auto Archive Chats v0.1.0 (beta) by @bumbleshoot
+ * Auto Archive Chats v0.2.0 (beta) by @bumbleshoot
  *
  * See GitHub page for info & setup instructions:
  * https://github.com/bumbleshoot/auto-archive-chats
@@ -49,7 +49,7 @@ function install() {
     deleteTriggers();
     deleteWebhooks();
 
-    // archive chats
+    // get list of group IDs & rename files if names changed
     let groupIds = [];
     for (archive of ARCHIVES) {
       groupIds.push(archive.groupId || getUser().party._id);
@@ -67,6 +67,8 @@ function install() {
         }
       }
     }
+
+    // archive chats
     archiveChats(groupIds);
 
     // delete group ID script properties
@@ -345,7 +347,7 @@ function archiveChats(groupIds) {
         let files = folder.getFiles();
         while (files.hasNext()) {
           let file = files.next();
-          if (file.getMimeType() == MimeType.GOOGLE_SHEETS && file.getName().match(/^[0-9]{4}$/) !== null) {
+          if (file.getMimeType() == MimeType.GOOGLE_SHEETS && file.getName().match(/^[0-9]{4}/) !== null) {
             let metadata = SpreadsheetApp.openById(file.getId()).getDeveloperMetadata();
             if (metadata.length < 1 || metadata[0].getValue() !== groupId) {
               groupIdChanged = true;
@@ -357,17 +359,23 @@ function archiveChats(groupIds) {
           throw new Error("The group ID associated with the Google Drive folder \"" + DriveApp.getFolderById(archive.folderId).getName() + "\" has changed. Please move or delete the chat archives in this folder so the script can create new ones.");
         }
 
-        // get group from API
-        let group = JSON.parse(fetch("https://habitica.com/api/v3/groups/" + (archive.groupId || "party"), GET_PARAMS)).data;
+        // get group data from API
+        if (typeof archive.chat === "undefined") {
+          let group = JSON.parse(fetch("https://habitica.com/api/v3/groups/" + (archive.groupId || "party"), GET_PARAMS)).data;
+          archive.chat = group.chat;
+          if (!archive.name) {
+            archive.name = group.name;
+          }
+        }
 
         // if group chat has messages
-        if (group.chat.length > 0) {
+        if (archive.chat.length > 0) {
 
-          console.log("Saving chat history for " + group.name);
+          console.log("Saving chat history for " + archive.name);
 
           // split chat messages by year, month
           let chat = {};
-          for (message of group.chat) {
+          for (message of archive.chat) {
 
             let timestamp = new Date(message.timestamp);
 
@@ -388,11 +396,11 @@ function archiveChats(groupIds) {
           for (year of Object.keys(chat)) {
 
             // get spreadsheet for year
-            let files = folder.getFilesByName(year);
+            let files = folder.getFiles();
             let spreadsheet;
             while (files.hasNext()) {
               let file = files.next();
-              if (file.getMimeType() == MimeType.GOOGLE_SHEETS) {
+              if (file.getMimeType() == MimeType.GOOGLE_SHEETS && file.getName().startsWith(year)) {
                 spreadsheet = SpreadsheetApp.openById(file.getId());
                 break;
               }
@@ -400,7 +408,7 @@ function archiveChats(groupIds) {
 
             // create spreadsheet for year if not already created
             if (typeof spreadsheet === "undefined") {
-              spreadsheet = SpreadsheetApp.create(year);
+              spreadsheet = SpreadsheetApp.create(year + " " + archive.name + " Archive");
               spreadsheet.addDeveloperMetadata("groupId", archive.groupId || getUser().party._id, SpreadsheetApp.DeveloperMetadataVisibility.DOCUMENT);
               DriveApp.getFileById(spreadsheet.getId()).moveTo(folder);
             }
