@@ -1,5 +1,5 @@
 /**
- * Auto Archive Chats v0.2.0 (beta) by @bumbleshoot
+ * Auto Archive Chats v0.2.1 (beta) by @bumbleshoot
  *
  * See GitHub page for info & setup instructions:
  * https://github.com/bumbleshoot/auto-archive-chats
@@ -51,7 +51,7 @@ function install() {
 
     // get list of group IDs & rename files if names changed
     let groupIds = [];
-    for (archive of ARCHIVES) {
+    for (let archive of ARCHIVES) {
       groupIds.push(archive.groupId || getUser().party._id);
       let folder = DriveApp.getFolderById(archive.folderId);
       let files = folder.getFiles();
@@ -72,7 +72,7 @@ function install() {
     archiveChats(groupIds);
 
     // delete group ID script properties
-    for (scriptProperty of Object.entries(scriptProperties.getProperties())) {
+    for (let scriptProperty of Object.entries(scriptProperties.getProperties())) {
       if (scriptProperty[0].match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/) !== null) {
         scriptProperties.deleteProperty(scriptProperty[0]);
       }
@@ -189,7 +189,7 @@ function deleteTriggers() {
 
     console.log("Deleting triggers");
 
-    for (trigger of triggers) {
+    for (let trigger of triggers) {
       ScriptApp.deleteTrigger(trigger);
     }
   }
@@ -201,7 +201,7 @@ function deleteWebhooks() {
 
     console.log("Deleting webhooks");
 
-    for (webhook of webhooks) {
+    for (let webhook of webhooks) {
       if (webhook.url == WEB_APP_URL) {
         fetch("https://habitica.com/api/v3/user/webhook/" + webhook.id, DELETE_PARAMS);
       }
@@ -214,7 +214,7 @@ function createWebhooks() {
   let webhooks = [];
 
   // group chat received
-  for (archive of ARCHIVES) {
+  for (let archive of ARCHIVES) {
     webhooks.push({
       "type": "groupChatReceived",
       "options": {
@@ -228,7 +228,7 @@ function createWebhooks() {
 
     console.log("Creating webhooks");
 
-    for (webhook of webhooks) {
+    for (let webhook of webhooks) {
       webhook = Object.assign({
         "url": WEB_APP_URL,
         "label": DriveApp.getFileById(ScriptApp.getScriptId()).getName()
@@ -285,7 +285,7 @@ function processTrigger() {
   try {
 
     // delete temporary triggers
-    for (trigger of ScriptApp.getProjectTriggers()) {
+    for (let trigger of ScriptApp.getProjectTriggers()) {
       ScriptApp.deleteTrigger(trigger);
     }
 
@@ -332,10 +332,10 @@ function archiveChats(groupIds) {
   }
 
   // for each group
-  for (groupId of groupIds) {
+  for (let groupId of groupIds) {
 
     // get archive
-    for (archive of ARCHIVES) {
+    for (let archive of ARCHIVES) {
       if (archive.groupId === groupId || (archive.groupId === "" && groupId === getUser().party._id)) {
 
         // open folder
@@ -375,7 +375,7 @@ function archiveChats(groupIds) {
 
           // split chat messages by year, month
           let chat = {};
-          for (message of archive.chat) {
+          for (let message of archive.chat) {
 
             let timestamp = new Date(message.timestamp);
 
@@ -393,7 +393,7 @@ function archiveChats(groupIds) {
           }
 
           // for each year
-          for (year of Object.keys(chat)) {
+          for (let year of Object.keys(chat)) {
 
             // get spreadsheet for year
             let files = folder.getFiles();
@@ -414,7 +414,7 @@ function archiveChats(groupIds) {
             }
 
             // for each month in year
-            for (month of Object.keys(chat[year])) {
+            for (let month of Object.keys(chat[year])) {
 
               // get sheet for month
               let sheet = spreadsheet.getSheetByName(month);
