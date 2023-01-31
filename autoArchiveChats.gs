@@ -1,5 +1,5 @@
 /**
- * Auto Archive Chats v0.2.2 (beta) by @bumbleshoot
+ * Auto Archive Chats v0.2.3 (beta) by @bumbleshoot
  *
  * See GitHub page for info & setup instructions:
  * https://github.com/bumbleshoot/auto-archive-chats
@@ -281,8 +281,11 @@ function doPost(e) {
  * Deletes temporary triggers, calls the archiveChats() 
  * function, and emails the user if any errors are thrown.
  */
+let trigger;
 function processTrigger() {
   try {
+
+    trigger = true;
 
     // delete temporary triggers
     for (let trigger of ScriptApp.getProjectTriggers()) {
@@ -311,179 +314,206 @@ function processTrigger() {
  * and spreadsheets by year.
  */
 function archiveChats(groupIds) {
+  try {
 
-  // get group IDs from script properties if not passed to function
-  if (typeof groupIds === "undefined") {
-    groupIds = Object.entries(scriptProperties.getProperties())
-      .filter(scriptProperty => scriptProperty[0].match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/) !== null);
-    if (groupIds.length === 0) {
-      return;
-    } else {
-      groupIds = groupIds
-        .sort((a, b) => {
-          if (a[1] < b[1]) {
-            return -1;
-          } else {
-            return 1;
-          }
-        })
-        .map(scriptProperty => scriptProperty[0]);
-    }
-  }
+    // prevent multiple instances from running at once
+    let lock = LockService.getScriptLock();
+    if ((trigger && lock.tryLock(0)) || lock.tryLock(360000)) {
 
-  // for each group
-  for (let groupId of groupIds) {
-
-    // get archive
-    for (let archive of ARCHIVES) {
-      if (archive.groupId === groupId || (archive.groupId === "" && groupId === getUser().party._id)) {
-
-        // open folder
-        let folder = DriveApp.getFolderById(archive.folderId);
-
-        // check for spreadsheet group ID change
-        let groupIdChanged = false;
-        let groupId = archive.groupId || getUser().party._id;
-        let files = folder.getFiles();
-        while (files.hasNext()) {
-          let file = files.next();
-          if (file.getMimeType() == MimeType.GOOGLE_SHEETS && file.getName().match(/^[0-9]{4}/) !== null) {
-            let metadata = SpreadsheetApp.openById(file.getId()).getDeveloperMetadata();
-            if (metadata.length < 1 || metadata[0].getValue() !== groupId) {
-              groupIdChanged = true;
-              break;
-            }
-          }
+      // get group IDs from script properties if not passed to function
+      if (typeof groupIds === "undefined") {
+        groupIds = Object.entries(scriptProperties.getProperties())
+          .filter(scriptProperty => scriptProperty[0].match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/) !== null);
+        if (groupIds.length === 0) {
+          return;
+        } else {
+          groupIds = groupIds
+            .sort((a, b) => {
+              if (a[1] < b[1]) {
+                return -1;
+              } else {
+                return 1;
+              }
+            })
+            .map(scriptProperty => scriptProperty[0]);
         }
-        if (groupIdChanged) {
-          throw new Error("The group ID associated with the Google Drive folder \"" + DriveApp.getFolderById(archive.folderId).getName() + "\" has changed. Please move or delete the chat archives in this folder so the script can create new ones.");
-        }
+      }
 
-        // get group data from API
-        if (typeof archive.chat === "undefined") {
-          let group = JSON.parse(fetch("https://habitica.com/api/v3/groups/" + (archive.groupId || "party"), GET_PARAMS)).data;
-          archive.chat = group.chat;
-          if (!archive.name) {
-            archive.name = group.name;
-          }
-        }
+      // for each group
+      for (let groupId of groupIds) {
 
-        // if group chat has messages
-        if (archive.chat.length > 0) {
+        // get archive
+        for (let archive of ARCHIVES) {
+          if (archive.groupId === groupId || (archive.groupId === "" && groupId === getUser().party._id)) {
 
-          console.log("Saving chat history for " + archive.name);
+            // open folder
+            let folder = DriveApp.getFolderById(archive.folderId);
 
-          // split chat messages by year, month
-          let chat = {};
-          for (let message of archive.chat) {
-
-            let timestamp = new Date(message.timestamp);
-
-            let year = timestamp.getFullYear();
-            if (!chat.hasOwnProperty(year)) {
-              chat[year] = {};
-            }
-
-            let month = new Intl.DateTimeFormat('en-US', { month: "short" }).format(timestamp);
-            if (!chat[year].hasOwnProperty(month)) {
-              chat[year][month] = [];
-            }
-
-            chat[year][month].push(message);
-          }
-
-          // for each year
-          for (let year of Object.keys(chat)) {
-
-            // get spreadsheet for year
+            // check for spreadsheet group ID change
+            let groupIdChanged = false;
+            let groupId = archive.groupId || getUser().party._id;
             let files = folder.getFiles();
-            let spreadsheet;
             while (files.hasNext()) {
               let file = files.next();
-              if (file.getMimeType() == MimeType.GOOGLE_SHEETS && file.getName().startsWith(year)) {
-                spreadsheet = SpreadsheetApp.openById(file.getId());
-                break;
+              if (file.getMimeType() == MimeType.GOOGLE_SHEETS && file.getName().match(/^[0-9]{4}/) !== null) {
+                let metadata = SpreadsheetApp.openById(file.getId()).getDeveloperMetadata();
+                if (metadata.length < 1 || metadata[0].getValue() !== groupId) {
+                  groupIdChanged = true;
+                  break;
+                }
+              }
+            }
+            if (groupIdChanged) {
+              throw new Error("The group ID associated with the Google Drive folder \"" + DriveApp.getFolderById(archive.folderId).getName() + "\" has changed. Please move or delete the chat archives in this folder so the script can create new ones.");
+            }
+
+            // get group data from API
+            if (typeof archive.chat === "undefined") {
+              let group = JSON.parse(fetch("https://habitica.com/api/v3/groups/" + (archive.groupId || "party"), GET_PARAMS)).data;
+              archive.chat = group.chat;
+              if (!archive.name) {
+                archive.name = group.name;
               }
             }
 
-            // create spreadsheet for year if not already created
-            if (typeof spreadsheet === "undefined") {
-              spreadsheet = SpreadsheetApp.create(year + " " + archive.name + " Archive");
-              spreadsheet.addDeveloperMetadata("groupId", archive.groupId || getUser().party._id, SpreadsheetApp.DeveloperMetadataVisibility.DOCUMENT);
-              DriveApp.getFileById(spreadsheet.getId()).moveTo(folder);
-            }
+            // if group chat has messages
+            if (archive.chat.length > 0) {
 
-            // for each month in year
-            for (let month of Object.keys(chat[year])) {
+              console.log("Saving chat history for " + archive.name);
 
-              // get sheet for month
-              let sheet = spreadsheet.getSheetByName(month);
+              // split chat messages by year, month
+              let chat = {};
+              for (let message of archive.chat) {
 
-              // create sheet for month if not already created
-              if (sheet === null) {
-                sheet = spreadsheet.insertSheet(month, spreadsheet.getNumSheets());
+                let timestamp = new Date(message.timestamp);
+
+                let year = timestamp.getFullYear();
+                if (!chat.hasOwnProperty(year)) {
+                  chat[year] = {};
+                }
+
+                let month = new Intl.DateTimeFormat('en-US', { month: "short" }).format(timestamp);
+                if (!chat[year].hasOwnProperty(month)) {
+                  chat[year][month] = [];
+                }
+
+                chat[year][month].push(message);
               }
 
-              // print headings
-              let headings = ["ID", "Timestamp", "Username", "Likes", "Text", "Unformatted Text"];
-              sheet.getRange(1, 1, 1, headings.length).setValues([headings]).setFontWeight("bold").setHorizontalAlignment("center").setVerticalAlignment("middle");
+              // for each year
+              for (let year of Object.keys(chat)) {
 
-              // find oldest chat message in sheet
-              let oldestMessageRow = 2;
-              if (sheet.getRange(oldestMessageRow, 1).getValue() !== "") {
-                let oldestMessageId = chat[year][month][chat[year][month].length-1]._id;
-                let messageIds = sheet.getRange(2, 1, sheet.getLastRow()-1, 1).getValues();
-                for (; oldestMessageRow<messageIds.length+2; oldestMessageRow++) {
-                  if (messageIds[oldestMessageRow-2][0] == oldestMessageId) {
+                // get spreadsheet for year
+                let files = folder.getFiles();
+                let spreadsheet;
+                while (files.hasNext()) {
+                  let file = files.next();
+                  if (file.getMimeType() == MimeType.GOOGLE_SHEETS && file.getName().startsWith(year)) {
+                    spreadsheet = SpreadsheetApp.openById(file.getId());
                     break;
                   }
                 }
-              }
 
-              // delete chat messages starting at oldest message
-              sheet.getRange(oldestMessageRow, 1, Math.max(1, sheet.getLastRow()-oldestMessageRow+1), sheet.getLastColumn()).clearContent();
-
-              // for each message
-              for (let i=chat[year][month].length-1; i>=0; i--) {
-
-                // get timestamp
-                let timestamp = new Date(chat[year][month][i].timestamp);
-                let timezoneOffset = -timestamp.getTimezoneOffset()/60;
-                if (timezoneOffset == 0) {
-                  timezoneOffset = "";
-                } else if (timezoneOffset > 0) {
-                  timezoneOffset = "+" + timezoneOffset;
+                // create spreadsheet for year if not already created
+                if (typeof spreadsheet === "undefined") {
+                  spreadsheet = SpreadsheetApp.create(year + " " + archive.name + " Archive");
+                  spreadsheet.addDeveloperMetadata("groupId", archive.groupId || getUser().party._id, SpreadsheetApp.DeveloperMetadataVisibility.DOCUMENT);
+                  DriveApp.getFileById(spreadsheet.getId()).moveTo(folder);
                 }
-                timestamp = timestamp.toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric", hour12: false, hour: "2-digit", minute: "2-digit", second: "2-digit" }).replaceAll(",", "").replace(" AM", "").replace(" PM", "") + " GMT" + timezoneOffset;
 
-                // print to sheet
-                sheet.getRange(oldestMessageRow+(chat[year][month].length-1-i), 1, 1, headings.length).setValues([[chat[year][month][i]._id, timestamp, chat[year][month][i].username, Object.keys(chat[year][month][i].likes).length, chat[year][month][i].text, chat[year][month][i].unformattedText]]);
+                // for each month in year
+                for (let month of Object.keys(chat[year])) {
+
+                  // get sheet for month
+                  let sheet = spreadsheet.getSheetByName(month);
+
+                  // create sheet for month if not already created
+                  if (sheet === null) {
+                    sheet = spreadsheet.insertSheet(month, spreadsheet.getNumSheets());
+                  }
+
+                  // print headings
+                  let headings = ["ID", "Timestamp", "Username", "Likes", "Text", "Unformatted Text"];
+                  sheet.getRange(1, 1, 1, headings.length).setValues([headings]).setFontWeight("bold").setHorizontalAlignment("center").setVerticalAlignment("middle");
+
+                  // find oldest chat message in sheet
+                  let oldestMessageRow = 2;
+                  if (sheet.getRange(oldestMessageRow, 1).getValue() !== "") {
+                    let oldestMessageId = chat[year][month][chat[year][month].length-1]._id;
+                    let messageIds = sheet.getRange(2, 1, sheet.getLastRow()-1, 1).getValues();
+                    for (; oldestMessageRow<messageIds.length+2; oldestMessageRow++) {
+                      if (messageIds[oldestMessageRow-2][0] == oldestMessageId) {
+                        break;
+                      }
+                    }
+                  }
+
+                  // delete chat messages starting at oldest message
+                  sheet.getRange(oldestMessageRow, 1, Math.max(1, sheet.getLastRow()-oldestMessageRow+1), sheet.getLastColumn()).clearContent();
+
+                  // for each message
+                  for (let i=chat[year][month].length-1; i>=0; i--) {
+
+                    // get timestamp
+                    let timestamp = new Date(chat[year][month][i].timestamp);
+                    let timezoneOffset = -timestamp.getTimezoneOffset()/60;
+                    if (timezoneOffset == 0) {
+                      timezoneOffset = "";
+                    } else if (timezoneOffset > 0) {
+                      timezoneOffset = "+" + timezoneOffset;
+                    }
+                    timestamp = timestamp.toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric", hour12: false, hour: "2-digit", minute: "2-digit", second: "2-digit" }).replaceAll(",", "").replace(" AM", "").replace(" PM", "") + " GMT" + timezoneOffset;
+
+                    // print to sheet
+                    sheet.getRange(oldestMessageRow+(chat[year][month].length-1-i), 1, 1, headings.length).setValues([[chat[year][month][i]._id, timestamp, chat[year][month][i].username, Object.keys(chat[year][month][i].likes).length, chat[year][month][i].text, chat[year][month][i].unformattedText]]);
+                  }
+
+                  // format sheet
+                  sheet.autoResizeColumns(1, sheet.getLastColumn()-2).setColumnWidth(1, sheet.getColumnWidth(1)/2).setColumnWidth(2, 113).setColumnWidths(sheet.getLastColumn()-1, 2, 400).setFrozenRows(1);
+                  sheet.getRange(2, 1, sheet.getLastRow(), sheet.getLastColumn()).setHorizontalAlignment("center").setVerticalAlignment("top").setWrap(true);
+                  sheet.getRange(2, sheet.getLastColumn()-1, sheet.getLastRow()-1, 2).setHorizontalAlignment("left");
+                }
+
+                // delete Sheet1 if exists
+                let sheet1 = spreadsheet.getSheetByName("Sheet1");
+                if (sheet1 !== null) {
+                  spreadsheet.deleteSheet(sheet1);
+                }
               }
 
-              // format sheet
-              sheet.autoResizeColumns(1, sheet.getLastColumn()-2).setColumnWidth(1, sheet.getColumnWidth(1)/2).setColumnWidth(2, 113).setColumnWidths(sheet.getLastColumn()-1, 2, 400).setFrozenRows(1);
-              sheet.getRange(2, 1, sheet.getLastRow(), sheet.getLastColumn()).setHorizontalAlignment("center").setVerticalAlignment("top").setWrap(true);
-              sheet.getRange(2, sheet.getLastColumn()-1, sheet.getLastRow()-1, 2).setHorizontalAlignment("left");
+            // if group chat has no messages
+            } else {
+              console.log("No chat messages to archive");
             }
 
-            // delete Sheet1 if exists
-            let sheet1 = spreadsheet.getSheetByName("Sheet1");
-            if (sheet1 !== null) {
-              spreadsheet.deleteSheet(sheet1);
-            }
+            break;
           }
-
-        // if group chat has no messages
-        } else {
-          console.log("No chat messages to archive");
         }
 
-        break;
+        // remove script property for group ID
+        scriptProperties.deleteProperty(groupId);
+      }
+
+      lock.releaseLock();
+
+    // if lock not acquired, recreate temporary trigger
+    } else {
+      let triggerNeeded = true;
+      if (ScriptApp.getProjectTriggers().length > 0) {
+        triggerNeeded = false;
+      }
+      if (triggerNeeded) {
+        ScriptApp.newTrigger("processTrigger")
+          .timeBased()
+          .after(1)
+          .create();
       }
     }
 
-    // remove script property for group ID
-    scriptProperties.deleteProperty(groupId);
+  } catch (e) {
+    if (!e.stack.includes("There are too many LockService operations against the same script") && !e.stack.includes("We're sorry, a server error occurred. Please wait a bit and try again.")) {
+      throw e;
+    }
   }
 }
 
