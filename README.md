@@ -3,6 +3,8 @@
 ## Summary
 Automatically archives all chat messages from the provided Habitica guilds (and/or the user's party) into Google Drive folders. Each archive (folder) contains one spreadsheet for each year, and each spreadsheet contains one sheet/tab for each month. When chat messages fall off the 200 message "cliff" in Habitica, they will remain in the archive.
 
+[<img title="Chat archive spreadsheet" src="https://github.com/bumbleshoot/auto-archive-chats/blob/main/auto-archive-chats.png?raw=true" width="250">](https://github.com/bumbleshoot/auto-archive-chats/blob/main/auto-archive-chats.png?raw=true)
+
 ## Setup Instructions
 You need to use a desktop computer for this. It will not work on a phone or tablet!
 1. You need to be a member of each party & guild you are archiving. If you want to archive a guild you're not a member of, join it now. If you don't want to join all the guilds you're archiving, you can create another Habitica account, join the guilds with that account, grant that account's email address [Editor access](https://support.google.com/drive/answer/7166529?hl=en&co=GENIE.Platform%3DDesktop) to your Google Drive folders (which you will create in step 8 below), and set up this script for that account instead.
