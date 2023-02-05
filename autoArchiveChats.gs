@@ -1,5 +1,5 @@
 /**
- * Auto Archive Chats v0.2.5 (beta) by @bumbleshoot
+ * Auto Archive Chats v0.2.6 (beta) by @bumbleshoot
  *
  * See GitHub page for info & setup instructions:
  * https://github.com/bumbleshoot/auto-archive-chats
@@ -271,6 +271,7 @@ function doPost(e) {
       DriveApp.getFileById(ScriptApp.getScriptId()).getName() + " failed!",
       e.stack
     );
+    console.error(e.stack);
     throw e;
   }
 }
@@ -301,6 +302,7 @@ function processTrigger() {
       DriveApp.getFileById(ScriptApp.getScriptId()).getName() + " failed!",
       e.stack
     );
+    console.error(e.stack);
     throw e;
   }
 }
