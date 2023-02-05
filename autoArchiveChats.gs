@@ -23,7 +23,7 @@ const ARCHIVES = [
 ];
  
 /*************************************\
-*  DO NOT EDIT ANYTHING BELOW HERE  *
+ *  DO NOT EDIT ANYTHING BELOW HERE  *
 \*************************************/
 
 const PARAMS = {
