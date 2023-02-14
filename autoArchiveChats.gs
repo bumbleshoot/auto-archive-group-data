@@ -1,5 +1,5 @@
 /**
- * Auto Archive Chats v0.2.6 (beta) by @bumbleshoot
+ * Auto Archive Chats v0.2.7 (beta) by @bumbleshoot
  *
  * See GitHub page for info & setup instructions:
  * https://github.com/bumbleshoot/auto-archive-chats
@@ -358,7 +358,7 @@ function archiveChats(groupIds) {
             while (files.hasNext()) {
               let file = files.next();
               if (file.getMimeType() == MimeType.GOOGLE_SHEETS && file.getName().match(/^[0-9]{4}/) !== null) {
-                let metadata = SpreadsheetApp.openById(file.getId()).getDeveloperMetadata();
+                let metadata = openSpreadsheet(file.getId()).getDeveloperMetadata();
                 if (metadata.length < 1 || metadata[0].getValue() !== groupId) {
                   groupIdChanged = true;
                   break;
@@ -411,7 +411,7 @@ function archiveChats(groupIds) {
                 while (files.hasNext()) {
                   let file = files.next();
                   if (file.getMimeType() == MimeType.GOOGLE_SHEETS && file.getName().startsWith(year)) {
-                    spreadsheet = SpreadsheetApp.openById(file.getId());
+                    spreadsheet = openSpreadsheet(file.getId());
                     break;
                   }
                 }
@@ -515,6 +515,33 @@ function archiveChats(groupIds) {
   } catch (e) {
     if (!e.stack.includes("There are too many LockService operations against the same script") && !e.stack.includes("We're sorry, a server error occurred. Please wait a bit and try again.")) {
       throw e;
+    }
+  }
+}
+
+/**
+ * openSpreadsheet(id)
+ * 
+ * Opens the spreadsheet identified by id. Retries every 5s 
+ * for up to a min on "Document is missing" error (this error 
+ * is a Google Apps Script bug)
+ */
+function openSpreadsheet(id) {
+
+  // open spreadsheet
+  let documentMissing = 0;
+  while (true) {
+    try {
+      return SpreadsheetApp.openById(id);
+
+    // if "document is missing" error, wait 5 seconds & try again
+    } catch (e) {
+      if (documentMissing < 12 && e.stack.includes("is missing (perhaps it was deleted, or you don't have read access?)")) {
+        documentMissing++;
+        Utilities.sleep(5000);
+      } else {
+        throw e;
+      }
     }
   }
 }
