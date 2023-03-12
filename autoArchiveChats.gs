@@ -1,5 +1,5 @@
 /**
- * Auto Archive Chats v0.2.7 (beta) by @bumbleshoot
+ * Auto Archive Chats v0.2.8 (beta) by @bumbleshoot
  *
  * See GitHub page for info & setup instructions:
  * https://github.com/bumbleshoot/auto-archive-chats
@@ -464,7 +464,7 @@ function archiveChats(groupIds) {
                     } else if (timezoneOffset > 0) {
                       timezoneOffset = "+" + timezoneOffset;
                     }
-                    timestamp = timestamp.toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric", hour12: false, hour: "2-digit", minute: "2-digit", second: "2-digit" }).replaceAll(",", "").replace(" AM", "").replace(" PM", "") + " GMT" + timezoneOffset;
+                    timestamp = timestamp.toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric", hour12: false, hour: "2-digit", minute: "2-digit", second: "2-digit" }).replaceAll(",", "").replaceAll(" 24:", " 00:").replace(" AM", "").replace(" PM", "") + " GMT" + timezoneOffset;
 
                     // print to sheet
                     sheet.getRange(oldestMessageRow+(chat[year][month].length-1-i), 1, 1, headings.length).setValues([[chat[year][month][i]._id, timestamp, chat[year][month][i].username, Object.keys(chat[year][month][i].likes).length, chat[year][month][i].text, chat[year][month][i].unformattedText]]);
