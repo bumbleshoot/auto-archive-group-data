@@ -1,5 +1,5 @@
 /**
- * Auto Archive Chats v0.2.8 (beta) by @bumbleshoot
+ * Auto Archive Chats v0.2.9 (beta) by @bumbleshoot
  *
  * See GitHub page for info & setup instructions:
  * https://github.com/bumbleshoot/auto-archive-chats
@@ -247,8 +247,11 @@ function createWebhooks() {
  * 
  * This function is called by webhooks.
  */
+let webhook;
 function doPost(e) {
   try {
+
+    webhook = true;
 
     // store group ID in script property
     scriptProperties.setProperty(JSON.parse(e.postData.contents).group.id, new Date().getTime());
@@ -574,7 +577,6 @@ function fetch(url, params) {
 
     // call API
     let response;
-    let addressUnavailable = 0;
     while (true) {
       try {
         response = UrlFetchApp.fetch(url, params);
@@ -582,8 +584,7 @@ function fetch(url, params) {
 
       // if address unavailable, wait 5 seconds & try again
       } catch (e) {
-        if (addressUnavailable < 12 && e.stack.includes("Address unavailable")) {
-          addressUnavailable++;
+        if (!webhook && e.stack.includes("Address unavailable")) {
           Utilities.sleep(5000);
         } else {
           throw e;
