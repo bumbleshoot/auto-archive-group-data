@@ -1,5 +1,5 @@
 /**
- * Auto Archive Chats v0.2.10 (beta) by @bumbleshoot
+ * Auto Archive Chats v0.2.11 (beta) by @bumbleshoot
  *
  * See GitHub page for info & setup instructions:
  * https://github.com/bumbleshoot/auto-archive-chats
@@ -629,7 +629,7 @@ function getUser(updated) {
         user = JSON.parse(user).data;
         break;
       } catch (e) {
-        if (i < 2 && e.stack.includes("Unterminated string in JSON")) {
+        if (i < 2 && (e.stack.includes("Unterminated string in JSON") || e.stack.includes("Expected ',' or '}' after property value in JSON at position"))) {
           continue;
         } else {
           throw e;
