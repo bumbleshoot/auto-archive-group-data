@@ -1,5 +1,5 @@
 /**
- * Auto Archive Chats v0.2.9 (beta) by @bumbleshoot
+ * Auto Archive Chats v0.2.10 (beta) by @bumbleshoot
  *
  * See GitHub page for info & setup instructions:
  * https://github.com/bumbleshoot/auto-archive-chats
@@ -269,13 +269,15 @@ function doPost(e) {
     }
 
   } catch (e) {
-    MailApp.sendEmail(
-      Session.getEffectiveUser().getEmail(),
-      DriveApp.getFileById(ScriptApp.getScriptId()).getName() + " failed!",
-      e.stack
-    );
-    console.error(e.stack);
-    throw e;
+    if (!e.stack.includes("Address unavailable")) {
+      MailApp.sendEmail(
+        Session.getEffectiveUser().getEmail(),
+        DriveApp.getFileById(ScriptApp.getScriptId()).getName() + " failed!",
+        e.stack
+      );
+      console.error(e.stack);
+      throw e;
+    }
   }
 }
 
