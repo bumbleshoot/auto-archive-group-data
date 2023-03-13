@@ -6,7 +6,7 @@ Automatically archives all chat messages from the provided Habitica guilds (and/
 [<img title="Chat archive spreadsheet" src="https://github.com/bumbleshoot/auto-archive-chats/blob/main/auto-archive-chats.png?raw=true" width="250">](https://github.com/bumbleshoot/auto-archive-chats/blob/main/auto-archive-chats.png?raw=true)
 
 ## Setup Instructions
-You need to use a desktop computer for this. It will not work on a phone or tablet!
+It is highly recommended that you use a desktop computer for this, as some of the steps don't work well on mobile.
 1. You need to be a member of each party & guild you are archiving. If you want to archive a guild you're not a member of, join it now. If you don't want to join all the guilds you're archiving, you can create another Habitica account, join the guilds with that account, grant that account's email address [Editor access](https://support.google.com/drive/answer/7166529?hl=en&co=GENIE.Platform%3DDesktop) to your Google Drive folders (which you will create in step 8 below), and set up this script for that account instead.
 2. Click [here](https://script.google.com/d/1rs7BWH1-uqupqDWplDRE-cPNeFuo6S1J-Iibwod00aBjmxhwpL1TwlHV/edit?usp=sharing) to go to the Auto Archive Chats script. If you're not already signed into your Google account, you will be asked to sign in.
 3. In the main menu on the left, click on "Overview" (looks like a lowercase letter i inside a circle).
@@ -19,7 +19,7 @@ You need to use a desktop computer for this. It will not work on a phone or tabl
 10. In the main menu on the left, click on "Project Settings" (looks like a cog).
 11. Click on the "Time zone" drop down and select the time zone you would like the chat archives to use.
 12. In the main menu on the left, click on "Editor" (looks like `<>`).
-13. Click the blue "Deploy" button near the top of the page, then click "New deployment". Under "Description", type "Auto Archive Chats" (without the quotes). Then click the "Deploy" button.
+13. Click the blue "Deploy" button near the top of the page, then click "New deployment", then click the "Deploy" button.
 14. Click the "Authorize access" button and select your Google account. Click on "Advanced", then "Go to Auto Archive Chats (unsafe)". (Don't worry, it is safe!) Then click the "Allow" button.
 15. Under "Web app", click the "Copy" button to copy the Web App URL. Then click the "Done" button.
 16. Paste your Web App URL inside the quotations where it says `const WEB_APP_URL = "";`.
@@ -30,7 +30,7 @@ You need to use a desktop computer for this. It will not work on a phone or tabl
 You're all done! If you need to change the settings (including the time zone) or uninstall the script at some point, follow the steps below.
 
 ## Changing the Settings
-You need to use a desktop computer for this. It will not work on a phone or tablet!
+It is highly recommended that you use a desktop computer for this, as some of the steps don't work well on mobile.
 1. [Click here](https://script.google.com/home) to see a list of your scripts. If you're not already signed into your Google account, click the "Start Scripting" button and sign in. Then click on "My Projects" in the main menu on the left.
 2. Click on "Auto Archive Chats".
 3. Edit the settings (`const`s) to your liking.
@@ -43,6 +43,7 @@ You need to use a desktop computer for this. It will not work on a phone or tabl
 10. Click the "Run" button to the left of the "Debug" button. Wait for it to say "Execution completed".
 
 ## Uninstalling the Script
+It is highly recommended that you use a desktop computer for this, as some of the steps don't work well on mobile.
 1. [Click here](https://script.google.com/home) to see a list of your scripts. If you're not already signed into your Google account, click the "Start Scripting" button and sign in. Then click on "My Projects" in the main menu on the left.
 2. Click on "Auto Archive Chats".
 3. Click the drop-down menu to the right of the "Debug" button, near the top of the page. Select "uninstall" from the drop-down.
@@ -51,7 +52,7 @@ You need to use a desktop computer for this. It will not work on a phone or tabl
 6. Click the "Archive" button (looks like a box with a down arrow inside). Then click the "Done" button.
 
 ## Updating the Script
-You need to use a desktop computer for this. It will not work on a phone or tablet!
+It is highly recommended that you use a desktop computer for this, as some of the steps don't work well on mobile.
 1. Follow the steps in [Uninstalling the Script](#uninstalling-the-script) above.
 2. Copy & paste your settings (`const`s) into a text editor so you can reference them while setting up the new version.
 3. In the main menu on the left, click on "Overview" (looks like a lowercase letter i inside a circle).
