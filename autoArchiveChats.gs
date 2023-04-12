@@ -1,5 +1,5 @@
 /**
- * Auto Archive Chats v0.3.0 (beta) by @bumbleshoot
+ * Auto Archive Chats v0.3.1 (beta) by @bumbleshoot
  *
  * See GitHub page for info & setup instructions:
  * https://github.com/bumbleshoot/auto-archive-chats
@@ -254,11 +254,8 @@ function createWebhooks() {
  * 
  * This function is called by webhooks.
  */
-let webhook;
 function doPost(e) {
   try {
-
-    webhook = true;
 
     // store group ID in script property
     scriptProperties.setProperty(JSON.parse(e.postData.contents).group.id, new Date().getTime());
@@ -276,15 +273,13 @@ function doPost(e) {
     }
 
   } catch (e) {
-    if (!e.stack.includes("Address unavailable")) {
-      MailApp.sendEmail(
-        Session.getEffectiveUser().getEmail(),
-        DriveApp.getFileById(ScriptApp.getScriptId()).getName() + " failed!",
-        e.stack
-      );
-      console.error(e.stack);
-      throw e;
-    }
+    MailApp.sendEmail(
+      Session.getEffectiveUser().getEmail(),
+      DriveApp.getFileById(ScriptApp.getScriptId()).getName() + " failed!",
+      e.stack
+    );
+    console.error(e.stack);
+    throw e;
   }
 }
 
@@ -595,7 +590,7 @@ function fetch(url, params) {
 
       // if address unavailable, wait 5 seconds & try again
       } catch (e) {
-        if (!webhook && e.stack.includes("Address unavailable")) {
+        if (e.stack.includes("Address unavailable")) {
           Utilities.sleep(5000);
         } else {
           throw e;
