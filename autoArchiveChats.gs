@@ -1,5 +1,5 @@
 /**
- * Auto Archive Chats v0.2.11 (beta) by @bumbleshoot
+ * Auto Archive Chats v0.3.0 (beta) by @bumbleshoot
  *
  * See GitHub page for info & setup instructions:
  * https://github.com/bumbleshoot/auto-archive-chats
@@ -8,6 +8,8 @@
 const USER_ID = "";
 const API_TOKEN = "";
 const WEB_APP_URL = "";
+
+const OMIT_SKILL_CASTS = false; // true or false. if true, skill casts will be omitted from the party chat archive.
 
 const ARCHIVES = [
   {
@@ -123,6 +125,11 @@ function validateConstants() {
 
   if (typeof WEB_APP_URL !== "string" || WEB_APP_URL == "") {
     console.log("ERROR: WEB_APP_URL must equal the web app url of this project's deployment.\n\neg. const WEB_APP_URL = \"https://script.google.com/macros/s/abc123def456ghi789jkl012abc345de/exec\";");
+    valid = false;
+  }
+
+  if (OMIT_SKILL_CASTS !== true && OMIT_SKILL_CASTS !== false) {
+    console.log("ERROR: OMIT_SKILL_CASTS must equal either true or false.\n\neg. const OMIT_SKILL_CASTS = true;\n    const OMIT_SKILL_CASTS = false;");
     valid = false;
   }
 
@@ -391,20 +398,22 @@ function archiveChats(groupIds) {
               // split chat messages by year, month
               let chat = {};
               for (let message of archive.chat) {
+                if (archive.groupId || OMIT_SKILL_CASTS !== true || message.text.match(/^`.+ casts .+ for the party\.`$/) === null) {
 
-                let timestamp = new Date(message.timestamp);
+                  let timestamp = new Date(message.timestamp);
 
-                let year = timestamp.getFullYear();
-                if (!chat.hasOwnProperty(year)) {
-                  chat[year] = {};
+                  let year = timestamp.getFullYear();
+                  if (!chat.hasOwnProperty(year)) {
+                    chat[year] = {};
+                  }
+
+                  let month = new Intl.DateTimeFormat('en-US', { month: "short" }).format(timestamp);
+                  if (!chat[year].hasOwnProperty(month)) {
+                    chat[year][month] = [];
+                  }
+
+                  chat[year][month].push(message);
                 }
-
-                let month = new Intl.DateTimeFormat('en-US', { month: "short" }).format(timestamp);
-                if (!chat[year].hasOwnProperty(month)) {
-                  chat[year][month] = [];
-                }
-
-                chat[year][month].push(message);
               }
 
               // for each year
