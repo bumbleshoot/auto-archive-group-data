@@ -1,4 +1,4 @@
-***Auto Archive Chats is currently in beta. There are still some edge cases that haven't been tested yet, so it may not work perfectly for you. If you're not okay with this, best to wait until Version 1 is released! If you get an error while running this script or the output is not what you expect, please let me know!***
+***Auto Archive Chats is currently in beta. There are still some edge cases that haven't been tested yet, so it may not work perfectly for you. If you're not okay with this, best to wait until Version 1 is released! If you get an error while running this script or the output is not what you expect, please submit a bug report [here](https://github.com/bumbleshoot/auto-archive-chats/issues)!***
 
 ## Summary
 Automatically archives all chat messages from the provided Habitica guilds (and/or the user's party) into Google Drive folders. Each archive (folder) contains one spreadsheet for each year, and each spreadsheet contains one sheet/tab for each month. When chat messages fall off the 200 message "cliff" in Habitica, they will remain in the archive.
