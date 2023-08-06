@@ -1,5 +1,5 @@
 /**
- * Auto Archive Chats v0.3.2 (beta) by @bumbleshoot
+ * Auto Archive Chats v0.4.0 (beta) by @bumbleshoot
  *
  * See GitHub page for info & setup instructions:
  * https://github.com/bumbleshoot/auto-archive-chats
@@ -393,7 +393,7 @@ function archiveChats(groupIds) {
               // split chat messages by year, month
               let chat = {};
               for (let message of archive.chat) {
-                if (archive.groupId || OMIT_SKILL_CASTS !== true || message.text.match(/^`.+ casts .+ for the party\.`$/) === null) {
+                if (archive.groupId || OMIT_SKILL_CASTS !== true || message.text.match(/^`.+ casts .+ for the party.*\.`$/) === null) {
 
                   let timestamp = new Date(message.timestamp);
 
