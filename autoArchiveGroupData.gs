@@ -1,5 +1,5 @@
 /**
- * Auto Archive Group Data v0.5.0 by @bumbleshoot
+ * Auto Archive Group Data v0.5.1 by @bumbleshoot
  *
  * See GitHub page for info & setup instructions:
  * https://github.com/bumbleshoot/auto-archive-group-data
@@ -405,11 +405,8 @@ function archiveGroupData(groupIds) {
 
       // for each group
       let groupIndex = 0;
-      if (oneTime) {
-        let groupIndexProperty = indices["GROUP_INDEX"];
-        if (groupIndexProperty !== null) {
-          groupIndex = parseInt(groupIndexProperty);
-        }
+      if (oneTime && indices.hasOwnProperty("GROUP_INDEX")) {
+        groupIndex = parseInt(indices["GROUP_INDEX"]);
       }
       for (let i=groupIndex; i<groupIds.length; i++) {
         let groupId = groupIds[i];
@@ -561,11 +558,8 @@ function archiveGroupData(groupIds) {
 
                 // for each challenge
                 let challengeIndex = 0;
-                if (oneTime) {
-                  let challengeIndexProperty = indices["CHALLENGE_INDEX"];
-                  if (challengeIndexProperty !== null) {
-                    challengeIndex = parseInt(challengeIndexProperty);
-                  }
+                if (oneTime && indices.hasOwnProperty("CHALLENGE_INDEX")) {
+                  challengeIndex = parseInt(indices["CHALLENGE_INDEX"]);
                 }
                 for (let j=challengeIndex; j<challenges.length; j++) {
                   let challenge = challenges[j];
