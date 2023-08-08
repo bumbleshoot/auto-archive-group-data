@@ -4,6 +4,7 @@ Archives all guild/party (group) data for multiple groups to spreadsheets in Goo
 * Member list
 * Challenges
 * Chat messages
+
 The script can also be set up to archive chat messages automatically, whenever the group receives a new chat message.
 
 ## Setup Instructions
