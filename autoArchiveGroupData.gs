@@ -1,5 +1,5 @@
 /**
- * Auto Archive Group Data v0.5.1 by @bumbleshoot
+ * Auto Archive Group Data v0.5.2 by @bumbleshoot
  *
  * See GitHub page for info & setup instructions:
  * https://github.com/bumbleshoot/auto-archive-group-data
@@ -482,7 +482,7 @@ function archiveGroupData(groupIds) {
               sheet.getRange(1, 1, sheet.getLastRow() || 1, 2).clearContent();
               headings = [["Name"], ["ID"], ["Leader"], ["Member Count"], ["Summary"], ["Description"]];
               sheet.getRange(1, 1, headings.length, 1).setValues(headings).setFontWeight("bold").setHorizontalAlignment("right").setVerticalAlignment("top");
-              sheet.getRange(1, 2, headings.length, 1).setValues([[group.name], [group.id], [group.leader.auth.local.username], [group.memberCount], [group.summary], [group.description]]).setHorizontalAlignment("left");
+              sheet.getRange(1, 2, headings.length, 1).setValues([[group.name], [group.id], [group.leader?.auth?.local?.username], [group.memberCount], [group.summary], [group.description]]).setHorizontalAlignment("left");
 
               SpreadsheetApp.flush();
 
@@ -749,8 +749,14 @@ function archiveGroupData(groupIds) {
                       }
                       timestamp = timestamp.toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric", hour12: false, hour: "2-digit", minute: "2-digit", second: "2-digit" }).replaceAll(",", "").replaceAll(" 24:", " 00:").replace(" AM", "").replace(" PM", "") + " GMT" + timezoneOffset;
 
+                      // get likes
+                      let likes = chat[year][month][i].likes;
+                      if (likes) {
+                        likes = Object.keys(likes).length;
+                      }
+
                       // print to sheet
-                      sheet.getRange(oldestMessageRow+(chat[year][month].length-1-i), 1, 1, headings.length).setValues([[chat[year][month][i]._id, timestamp, chat[year][month][i].username, Object.keys(chat[year][month][i].likes).length, chat[year][month][i].text, chat[year][month][i].unformattedText]]);
+                      sheet.getRange(oldestMessageRow+(chat[year][month].length-1-i), 1, 1, headings.length).setValues([[chat[year][month][i]._id, timestamp, chat[year][month][i].username, likes, chat[year][month][i].text, chat[year][month][i].unformattedText]]);
                     }
 
                     // format sheet
