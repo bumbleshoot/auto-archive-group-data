@@ -1,3 +1,5 @@
+***Auto Archive Group Data is currently in beta. There are still some edge cases that haven't been tested yet, so it may not work perfectly for you. If you're not okay with this, best to wait until Version 1 is released! If you get an error while running this script or the output is not what you expect, please submit a bug report [here](https://github.com/bumbleshoot/auto-archive-group-data/issues)!***
+
 ## Summary
 Archives all guild/party (group) data for multiple groups to spreadsheets in Google Drive folders. Archived data includes:
 * Guild name, ID, leader, member count, summary, description
