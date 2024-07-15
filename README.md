@@ -30,10 +30,12 @@ Now, follow the instructions in [Archiving Group Data Once](#archiving-group-dat
 Make sure you follow the [Setup Instructions](#setup-instructions) first!
 1. [Click here](https://script.google.com/home) to see a list of your scripts. If you're not already signed into your Google account, click the "Start Scripting" button and sign in. Then click on "My Projects" in the main menu on the left.
 2. Click on "Auto Archive Group Data".
-7. Click the drop-down menu to the right of the "Debug" button, near the top of the page. Select "archiveGroupData" from the drop-down.
-8. Click the "Run" button to the left of the "Debug" button. Wait for it to say "Execution completed".
-9. If you get an error that says "Exceeded maximum execution time", just run the script again. Keep running it until it finishes archiving all the data.
-10. If you want to share a group archive with others, right-click (Windows/Linux) or Ctrl+click (Mac) on the Google Drive folder in your web browser, then click "Share". Click the dropdown under "General access", and select "Anyone with the link". Then click the "Copy link" button and share that link with whoever you want.
+3. Click the drop-down menu to the right of the "Debug" button, near the top of the page. Select "archiveGroupData" from the drop-down.
+4. Click the "Run" button to the left of the "Debug" button.
+5. (If this is your first time running the script) Click the "Review permissions" button and select your Google account. Click on "Advanced", then "Go to Auto Archive Group Data (unsafe)". (Don't worry, it is safe!) Then click "Continue", then "Allow".
+6. Wait for the "Execution completed" message in the Execution Log.
+7. If you get an error that says "Exceeded maximum execution time", just run the script again. Keep running it until it finishes archiving all the data.
+8. If you want to share a group archive with others, right-click (Windows/Linux) or Ctrl+click (Mac) on the Google Drive folder in your web browser, then click "Share". Click the dropdown under "General access", and select "Anyone with the link". Then click the "Copy link" button and share that link with whoever you want.
 
 ## Archiving Chats Automatically
 Make sure you follow the [Setup Instructions](#setup-instructions) first!
