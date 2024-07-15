@@ -1,5 +1,5 @@
 /**
- * Auto Archive Group Data v0.5.3 by @bumbleshoot
+ * Auto Archive Group Data v0.6.0 by @bumbleshoot
  *
  * See GitHub page for info & setup instructions:
  * https://github.com/bumbleshoot/auto-archive-group-data
@@ -40,14 +40,18 @@ for (let i=0; i<ARCHIVES.length; i++) {
     ARCHIVES.splice(i, 1);
     i--;
 
-  // else add group id and folder id to group
+  // else add group id and folder id
   } else {
-    let match = ARCHIVES[i]["groupURL"].match(/https:\/\/habitica\.com\/groups\/guild\/(.+)/);
-    if (match === null) {
-      match = ARCHIVES[i]["groupURL"].match(/https:\/\/habitica\.com\/groups\/(tavern)/);
-      match[1] = "habitrpg";
+    if (ARCHIVES[i]["groupURL"] === "") {
+      ARCHIVES[i].groupId = "";
+    } else {
+      let match = ARCHIVES[i]["groupURL"].match(/https:\/\/habitica\.com\/groups\/guild\/(.+)/);
+      if (match === null) {
+        match = ARCHIVES[i]["groupURL"].match(/https:\/\/habitica\.com\/groups\/(tavern)/);
+        match[1] = "habitrpg";
+      }
+      ARCHIVES[i].groupId = match[1];
     }
-    ARCHIVES[i].groupId = match[1];
     ARCHIVES[i].folderId = ARCHIVES[i]["folderURL"].match(/https:\/\/drive\.google\.com\/drive\/(u\/0\/)?folders\/(.+)/)[2];
   }
 }
