@@ -12,18 +12,17 @@ The script can also be set up to archive chat messages automatically, whenever t
 ## Setup Instructions
 It is highly recommended that you use a desktop computer for this, as some of the steps don't work well on mobile.
 1. You need to be a member of each party & guild you are archiving. If you want to archive a guild you're not a member of, join it now. If you don't want to join all the guilds you're archiving, you can create another Habitica account, join the guilds with that account, grant that account's email address [Editor access](https://support.google.com/drive/answer/7166529?hl=en&co=GENIE.Platform%3DDesktop) to your Google Drive folders (which you will create in step 8 below), and set up this script for that account instead.
-2. Click [here](https://script.google.com/d/1nMpYn3bJUo6xUEHv8ve9VB5U2jlQlNm8U6_yEkXJA1Z_sAcA8l6MxaKA/edit?usp=sharing) to go to the Auto Archive Group Data script. If you're not already signed into your Google account, you will be asked to sign in.
-3. In the main menu on the left, click on "Overview" (looks like a lowercase letter i inside a circle).
-4. Click the "Make a copy" button (looks like two pages of paper).
-5. At the top of your screen, click on "Copy of Auto Archive Group Data". Rename it "Auto Archive Group Data" and click the "Rename" button.
-6. Click [here](https://habitica.com/user/settings/api) to open your API Settings. Highlight and copy your User ID (it looks something like this: `35c3fb6f-fb98-4bc3-b57a-ac01137d0847`). In the Auto Archive Group Data script, paste your User ID between the quotations where it says `const USER_ID = "";`. It should now look something like this: `const USER_ID = "35c3fb6f-fb98-4bc3-b57a-ac01137d0847";`
-7. On the same page where you copied your User ID, click the "Show API Token" button, and copy your API Token. In the Auto Archive Group Data script, paste your API Token between the quotations where it says `const API_TOKEN = "";`. It should now look something like this: `const API_TOKEN = "35c3fb6f-fb98-4bc3-b57a-ac01137d0847";`
-8. Set each of the `ARCHIVE_GROUP_INFO`, `ARCHIVE_GROUP_MEMBERS`, `ARCHIVE_GROUP_CHALLENGES`, and `ARCHIVE_GROUP_CHATS` to either `true` or `false` depending on what data you want to archive.
-9. If you are archiving your party chat and don't want skill casts to be included in the party chat archive, set `OMIT_SKILL_CASTS` to `true`.
-10. For each guild you want to archive, visit the guild in a web browser and copy the URL in your browser's address bar. In your script, paste the URL between the quotations where it says `groupURL: ""`. If you want to archive your party chat, you don't need a URL, just leave the quotations empty. Next, create a Google Drive folder for that guild (or party), navigate into the folder in your web browser, copy the folder URL, and paste it in between the quotations where it says `folderURL: ""`. If you want, you can add a name in between the quotations where it says `name: ""`, to help you remember what guild or party you are archiving. You can copy & paste the `{}` containing the `name`, `groupId`, and `folderId` as many times as you want, for as many guilds as you want! Just make sure every `{}` except for the last one has a comma after it.
-11. Click the "Save project" button near the top of the page (looks like a floppy disk).
-12. In the main menu on the left, click on "Project Settings" (looks like a cog).
-13. Click on the "Time zone" drop down and select the time zone you would like the chat archives to use.
+2. Click [here](https://script.google.com/d/1nMpYn3bJUo6xUEHv8ve9VB5U2jlQlNm8U6_yEkXJA1Z_sAcA8l6MxaKA?usp=sharing) to go to the Auto Archive Group Data script. If you're not already signed into your Google account, you will be asked to sign in.
+3. Click the "Make a copy" button (looks like two pages of paper).
+4. At the top of your screen, click on "Copy of Auto Archive Group Data". Rename it "Auto Archive Group Data" and click the "Rename" button.
+5. Click [here](https://habitica.com/user/settings/api) to open your API Settings. Highlight and copy your User ID (it looks something like this: `35c3fb6f-fb98-4bc3-b57a-ac01137d0847`). In the Auto Archive Group Data script, paste your User ID between the quotations where it says `const USER_ID = "";`. It should now look something like this: `const USER_ID = "35c3fb6f-fb98-4bc3-b57a-ac01137d0847";`
+6. On the same page where you copied your User ID, click the "Show API Token" button, and copy your API Token. In the Auto Archive Group Data script, paste your API Token between the quotations where it says `const API_TOKEN = "";`. It should now look something like this: `const API_TOKEN = "35c3fb6f-fb98-4bc3-b57a-ac01137d0847";`
+7. Set each of the `ARCHIVE_GROUP_INFO`, `ARCHIVE_GROUP_MEMBERS`, `ARCHIVE_GROUP_CHALLENGES`, and `ARCHIVE_GROUP_CHATS` to either `true` or `false` depending on what data you want to archive.
+8. If you are archiving your party chat and don't want skill casts to be included in the party chat archive, set `OMIT_SKILL_CASTS` to `true`.
+9. For each guild you want to archive, visit the guild in a web browser and copy the URL in your browser's address bar. In your script, paste the URL between the quotations where it says `groupURL: ""`. If you want to archive your party chat, you don't need a URL, just leave the quotations empty. Next, create a Google Drive folder for that guild (or party), navigate into the folder in your web browser, copy the folder URL, and paste it in between the quotations where it says `folderURL: ""`. If you want, you can add a name in between the quotations where it says `name: ""`, to help you remember what guild or party you are archiving. You can copy & paste the `{}` containing the `name`, `groupId`, and `folderId` as many times as you want, for as many guilds as you want! Just make sure every `{}` except for the last one has a comma after it.
+10. Click the "Save project" button near the top of the page (looks like a floppy disk).
+11. In the main menu on the left, click on "Project Settings" (looks like a cog).
+12. Click on the "Time zone" drop down and select the time zone you would like the chat archives to use.
 Now, follow the instructions in [Archiving Group Data Once](#archiving-group-data-once) and/or [Archiving Chats Automatically](#archiving-chats-automatically).
 
 ## Archiving Group Data Once
@@ -42,7 +41,7 @@ Make sure you follow the [Setup Instructions](#setup-instructions) first!
 1. [Click here](https://script.google.com/home) to see a list of your scripts. If you're not already signed into your Google account, click the "Start Scripting" button and sign in. Then click on "My Projects" in the main menu on the left.
 2. Click on "Auto Archive Group Data".
 3. Click the blue "Deploy" button near the top of the page, then click "New deployment", then click the "Deploy" button.
-4. Click the "Authorize access" button and select your Google account. Click on "Advanced", then "Go to Auto Archive Group Data (unsafe)". (Don't worry, it is safe!) Then click the "Allow" button.
+4. (If this is your first time deploying) Click the "Review permissions" button and select your Google account. Click on "Advanced", then "Go to Auto Archive Group Data (unsafe)". (Don't worry, it is safe!) Then click "Continue", then "Allow".
 5. Under "Web app", click the "Copy" button to copy the Web App URL. Then click the "Done" button.
 6. Paste your Web App URL inside the quotations where it says `const WEB_APP_URL = "";`.
 7. Click the drop-down menu to the right of the "Debug" button, near the top of the page. Select "install" from the drop-down.
